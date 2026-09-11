@@ -1,0 +1,11 @@
+{
+  "name": "tvetmara-website-builder",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "latest"
+  },
+  "devDependencies": {
+    "@netlify/functions": "latest"
+  }
+}
