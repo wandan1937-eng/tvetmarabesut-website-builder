@@ -242,13 +242,13 @@
   }
 
   function upgradeLabels(){
-    document.title='Business Website Studio v7 AI | TVET MARA Besut';
-    const eyebrow=document.querySelector('.eyebrow');if(eyebrow)eyebrow.textContent='Website Builder Pelajar v7 • AI Content Assistant';
-    const brand=document.querySelector('.brandlock > div:last-child');if(brand&&brand.firstChild)brand.firstChild.nodeValue='Business Website Studio v7';
-    const heroH=document.querySelector('.hero h1');if(heroH)heroH.textContent='Bina website profesional dengan bantuan AI.';
-    const heroP=document.querySelector('.hero p');if(heroP)heroP.textContent='Pilih jenis perniagaan, tulis idea ringkas dan biarkan AI bantu menyediakan headline, penerangan, USP, CTA serta kandungan produk sebelum anda preview dan publish.';
-    const meta=document.querySelector('.hero-meta');if(meta&&!meta.textContent.includes('AI Bantu Tulis'))meta.insertAdjacentHTML('afterbegin','<span>✓ AI Bantu Tulis</span>');
-    const foot=document.querySelector('.footer');if(foot)foot.textContent='Business Website Studio v7 AI • TVET MARA Besut • Built for learning, branding & real business use';
+    document.title='Business Website Studio v8 AI | TVET MARA Besut';
+    const eyebrow=document.querySelector('.eyebrow');if(eyebrow)eyebrow.textContent='Website Builder Pelajar v8 • AI + Multi Social';
+    const brand=document.querySelector('.brandlock > div:last-child');if(brand&&brand.firstChild)brand.firstChild.nodeValue='Business Website Studio v8';
+    const heroH=document.querySelector('.hero h1');if(heroH)heroH.textContent='Bina website profesional dengan bantuan AI dan saluran digital.';
+    const heroP=document.querySelector('.hero p');if(heroP)heroP.textContent='Pilih jenis perniagaan, gunakan AI untuk membantu kandungan, tambah media sosial dan saluran jualan, kemudian preview dan publish.';
+    const meta=document.querySelector('.hero-meta');if(meta&&!meta.textContent.includes('AI Bantu Tulis'))meta.insertAdjacentHTML('afterbegin','<span>✓ AI Bantu Tulis</span>');if(meta&&!meta.textContent.includes('Multi Social Media'))meta.insertAdjacentHTML('beforeend','<span>✓ Multi Social Media</span>');
+    const foot=document.querySelector('.footer');if(foot)foot.textContent='Business Website Studio v8 AI • TVET MARA Besut • Built for learning, branding & real business use';
   }
 
   function init(){injectStyles();injectPanel();upgradeLabels()}
