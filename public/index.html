@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Business Website Studio v6 | TVET MARA Besut</title>
+<title>Business Website Studio v8 | TVET MARA Besut</title>
 <meta name="description" content="No-code business website builder untuk pelajar TVET MARA Besut.">
 <link rel="stylesheet" href="/builder.css">
 </head>
 <body>
 <div class="shell">
   <header class="topbar">
-    <div class="brandlock"><div class="brandmark">W</div><div>Business Website Studio v6<small>TVET MARA BESUT • NO-CODE</small></div></div>
+    <div class="brandlock"><div class="brandmark">W</div><div>Business Website Studio v8<small>TVET MARA BESUT • NO-CODE</small></div></div>
     <div class="livepill">● Publish Online Aktif</div>
   </header>
 
   <section class="hero">
-    <span class="eyebrow">Website Builder Pelajar v6</span>
+    <span class="eyebrow">Website Builder Pelajar v8</span>
     <h1>Bina laman web perniagaan mengikut jenis bisnes anda.</h1>
     <p>Pilih kategori perniagaan. Sistem akan menyesuaikan struktur, wording, CTA, maklumat tambahan dan gaya visual secara automatik.</p>
-    <div class="hero-meta"><span>✓ 7 Jenis Perniagaan</span><span>✓ Mobile Friendly</span><span>✓ WhatsApp CTA</span><span>✓ Google Maps</span><span>✓ URL Awam</span></div>
+    <div class="hero-meta"><span>✓ 7 Jenis Perniagaan</span><span>✓ Mobile Friendly</span><span>✓ WhatsApp CTA</span><span>✓ Google Maps</span><span>✓ Multi Social Media</span><span>✓ URL Awam</span></div>
   </section>
 
   <div class="steps">
@@ -74,7 +74,15 @@
       <section class="panel">
         <div class="panelHead"><div class="panelTitle"><div class="iconbox">04</div><div><h2>Hubungi & Tempahan</h2><p class="note">Pastikan pelanggan boleh membuat tindakan dengan mudah.</p></div></div></div>
         <div class="row"><div><label>CTA Utama</label><select id="cta"><option>Order Sekarang</option><option>WhatsApp Sekarang</option><option>Tempah Sekarang</option><option>Tempah Servis</option><option>Buat Temujanji</option><option>Semak Stok / Order</option><option>Dapatkan Sebut Harga</option><option>Bincang Projek</option><option>Hubungi Kami</option></select></div><div><label>Nombor WhatsApp</label><input id="whatsapp" placeholder="60123456789"></div></div>
-        <div class="row"><div><label>Instagram</label><input id="instagram" placeholder="@namabisnes"></div><div><label>TikTok</label><input id="tiktok" placeholder="@namabisnes"></div></div>
+        <h3 style="margin:18px 0 4px">Media Sosial & Saluran Jualan</h3>
+        <p class="note">Isi yang digunakan sahaja. Pautan yang kosong tidak akan dipaparkan pada website.</p>
+        <div class="row"><div><label>Facebook</label><input id="facebook" placeholder="username atau pautan Facebook"></div><div><label>Instagram</label><input id="instagram" placeholder="@namabisnes atau pautan"></div></div>
+        <div class="row"><div><label>TikTok</label><input id="tiktok" placeholder="@namabisnes atau pautan"></div><div><label>YouTube</label><input id="youtube" placeholder="@channel atau pautan YouTube"></div></div>
+        <div class="row"><div><label>Telegram</label><input id="telegram" placeholder="@username atau pautan t.me"></div><div><label>X / Twitter</label><input id="xTwitter" placeholder="@username atau pautan X"></div></div>
+        <div class="row"><div><label>LinkedIn</label><input id="linkedin" placeholder="Pautan LinkedIn"></div><div><label>Website / Linktree</label><input id="websiteUrl" placeholder="https://..."></div></div>
+        <div class="row"><div><label>Shopee</label><input id="shopee" placeholder="Pautan kedai / produk Shopee"></div><div><label>Lazada</label><input id="lazada" placeholder="Pautan kedai / produk Lazada"></div></div>
+        <div id="customLinks"></div>
+        <div class="actions"><button type="button" class="btn btnSoft" onclick="addCustomLink()">＋ Tambah Pautan Lain</button></div>
         <label>Alamat Penuh / Lokasi Google Maps</label><textarea id="mapAddress" placeholder="Contoh: TVET MARA Besut, Terengganu"></textarea>
         <label>Pautan Google Maps (pilihan)</label><input id="mapLink" placeholder="https://maps.app.goo.gl/...">
       </section>
@@ -90,9 +98,10 @@
     <aside class="right"><section class="panel sticky"><div class="panelHead"><div class="panelTitle"><div class="iconbox">05</div><div><h2>Pratonton Langsung</h2><p class="note">Semak susun atur, gambar, teks dan CTA sebelum diterbitkan.</p></div></div></div><div class="previewShell"><div class="browserbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="addressbar">your-business.netlify.app</div></div><iframe id="frame" class="preview" title="Preview website"></iframe></div></section></aside>
   </main>
 
-  <footer class="footer">Business Website Studio v6 • TVET MARA Besut • Built for learning, branding & real business use</footer>
+  <footer class="footer">Business Website Studio v8 • TVET MARA Besut • Built for learning, branding & real business use</footer>
 </div>
 <script src="/business-types.js"></script>
 <script src="/app.js"></script>
+<script src="/ai-content.js"></script>
 </body>
 </html>
