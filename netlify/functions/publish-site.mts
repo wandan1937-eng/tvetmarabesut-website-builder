@@ -6,6 +6,7 @@ type SiteRecord = {
   publishKey: string;
   businessName?: string;
   updatedAt: string;
+  allowIndex?: boolean;
 };
 
 function getStudentStore() {
@@ -48,6 +49,7 @@ export default async (req: Request) => {
   const html = typeof body.html === "string" ? body.html : "";
   const businessName = typeof body.businessName === "string" ? body.businessName.slice(0, 120) : "";
   const suppliedKey = typeof body.publishKey === "string" ? body.publishKey : "";
+  const allowIndex = body.allowIndex === true;
   let slug = cleanSlug(typeof body.requestedSlug === "string" ? body.requestedSlug : businessName);
 
   if (!html || html.length < 50) {
@@ -80,6 +82,7 @@ export default async (req: Request) => {
     publishKey,
     businessName,
     updatedAt: new Date().toISOString(),
+    allowIndex,
   };
 
   await store.setJSON(`sites/${slug}`, record);
