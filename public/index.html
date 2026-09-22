@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Business Website Studio v8 | TVET MARA Besut</title>
+<title>Business Website Studio v9 | TVET MARA Besut</title>
 <meta name="description" content="No-code business website builder untuk pelajar TVET MARA Besut.">
 <link rel="stylesheet" href="/builder.css">
 </head>
 <body>
 <div class="shell">
   <header class="topbar">
-    <div class="brandlock"><div class="brandmark">W</div><div>Business Website Studio v8<small>TVET MARA BESUT • NO-CODE</small></div></div>
+    <div class="brandlock"><div class="brandmark">W</div><div>Business Website Studio v9<small>TVET MARA BESUT • NO-CODE</small></div></div>
     <div class="livepill">● Publish Online Aktif</div>
   </header>
 
   <section class="hero">
-    <span class="eyebrow">Website Builder Pelajar v8</span>
+    <span class="eyebrow">Website Builder Pelajar v9</span>
     <h1>Bina laman web perniagaan mengikut jenis bisnes anda.</h1>
     <p>Pilih kategori perniagaan. Sistem akan menyesuaikan struktur, wording, CTA, maklumat tambahan dan gaya visual secara automatik.</p>
-    <div class="hero-meta"><span>✓ 7 Jenis Perniagaan</span><span>✓ Mobile Friendly</span><span>✓ WhatsApp CTA</span><span>✓ Google Maps</span><span>✓ Multi Social Media</span><span>✓ URL Awam</span></div>
+    <div class="hero-meta"><span>✓ 7 Jenis Perniagaan</span><span>✓ Mobile Friendly</span><span>✓ WhatsApp CTA</span><span>✓ Google Maps</span><span>✓ Multi Social Media</span><span>✓ SEO Google</span><span>✓ Statistik Pelawat</span><span>✓ URL Awam</span></div>
   </section>
 
   <div class="steps">
@@ -68,11 +68,26 @@
         <div class="panelHead"><div class="panelTitle"><div class="iconbox">03</div><div><h2 id="itemsTitle">Produk & Servis</h2><p id="itemsNote" class="note"></p></div></div></div>
         <div id="products"></div>
         <div class="actions"><button class="btn btnSoft" onclick="addProduct()">＋ Tambah Item</button></div>
-        <label>Testimoni Pelanggan Sebenar</label><textarea id="testimonial" placeholder="Contoh: Servis cepat, penerangan jelas dan urusan sangat mudah."></textarea>
+      </section>
+
+      <section class="panel">
+        <div class="panelHead"><div class="panelTitle"><div class="iconbox">T</div><div><h2>Testimoni Pelanggan</h2><p class="note">Tambah lebih daripada satu testimoni. Gunakan maklum balas pelanggan sebenar sahaja.</p></div></div></div>
+        <div id="testimonials"></div>
+        <div class="actions"><button type="button" class="btn btnSoft" onclick="addTestimonial()">＋ Tambah Testimoni</button></div>
+      </section>
+
+      <section class="panel">
+        <div class="panelHead"><div class="panelTitle"><div class="iconbox">?</div><div><h2>Soalan Lazim (FAQ)</h2><p class="note">Jawab soalan yang pelanggan selalu tanya sebelum membuat tempahan.</p></div></div></div>
+        <div id="faqs"></div>
+        <div class="actions"><button type="button" class="btn btnSoft" onclick="addFAQ()">＋ Tambah FAQ</button></div>
       </section>
 
       <section class="panel">
         <div class="panelHead"><div class="panelTitle"><div class="iconbox">04</div><div><h2>Hubungi & Tempahan</h2><p class="note">Pastikan pelanggan boleh membuat tindakan dengan mudah.</p></div></div></div>
+        <h3 style="margin:4px 0 6px">Waktu Operasi</h3>
+        <div class="row"><div><label>Hari Operasi</label><input id="operationDays" placeholder="Contoh: Isnin – Sabtu"></div><div><label>Waktu Operasi</label><input id="operationHours" placeholder="Contoh: 9.00 pagi – 6.00 petang"></div></div>
+        <label>Catatan Waktu Operasi (pilihan)</label><input id="operationNote" placeholder="Contoh: Ahad tutup / Temujanji selepas waktu operasi">
+
         <div class="row"><div><label>CTA Utama</label><select id="cta"><option>Order Sekarang</option><option>WhatsApp Sekarang</option><option>Tempah Sekarang</option><option>Tempah Servis</option><option>Buat Temujanji</option><option>Semak Stok / Order</option><option>Dapatkan Sebut Harga</option><option>Bincang Projek</option><option>Hubungi Kami</option></select></div><div><label>Nombor WhatsApp</label><input id="whatsapp" placeholder="60123456789"></div></div>
         <h3 style="margin:18px 0 4px">Media Sosial & Saluran Jualan</h3>
         <p class="note">Isi yang digunakan sahaja. Pautan yang kosong tidak akan dipaparkan pada website.</p>
@@ -87,10 +102,20 @@
         <label>Pautan Google Maps (pilihan)</label><input id="mapLink" placeholder="https://maps.app.goo.gl/...">
       </section>
 
+      <section class="panel">
+        <div class="panelHead"><div class="panelTitle"><div class="iconbox">SEO</div><div><h2>SEO Google</h2><p class="note">Bantu Google memahami tajuk, penerangan dan topik website anda. Kedudukan Google tidak dijamin.</p></div></div></div>
+        <div class="actions"><button type="button" class="btn btnSoft" onclick="suggestSEO()">✨ Cadangkan SEO</button></div>
+        <label>Tajuk SEO</label><input id="seoTitle" maxlength="60" placeholder="Contoh: WAN Academy | Konsultasi Digital Besut">
+        <label>Penerangan SEO</label><textarea id="seoDescription" maxlength="160" placeholder="Ringkasan 120–160 aksara tentang perniagaan, produk/servis dan kawasan anda."></textarea>
+        <label>Kata Kunci SEO</label><input id="seoKeywords" placeholder="Contoh: website bisnes, konsultasi digital, Besut">
+        <label class="checkRow"><input id="allowIndex" type="checkbox"> <span>Benarkan Google mengindeks website ini</span></label>
+        <p class="note">Aktifkan hanya jika website memang sedia untuk carian awam. Sitemap Google hanya memasukkan website yang dibenarkan untuk indeks.</p>
+      </section>
+
       <div class="actionbar"><div class="actions"><button class="btn btnSoft" onclick="generatePrompt()">✦ Jana Prompt</button><button class="btn btnPrimary" onclick="preview()">◉ Pratonton Website</button><button class="btn btnGreen" onclick="publishWebsite()">🚀 Publish Website Online</button><button class="btn btnLight" onclick="saveDraft()">Simpan Draf</button></div></div>
       <div id="status" class="status"></div>
 
-      <section id="publishPanel" class="panel publishPanel"><div class="panelHead"><div class="panelTitle"><div class="iconbox">✓</div><div><h2>Website Berjaya Diterbitkan</h2><p id="publishMsg" class="note">URL awam sedia digunakan.</p></div></div></div><label>URL Awam Website</label><div class="urlbox"><input id="publicUrl" readonly><button class="btn btnSoft" onclick="copyUrl()">Salin URL</button><button class="btn btnPrimary" onclick="openUrl()">Buka Website</button></div></section>
+      <section id="publishPanel" class="panel publishPanel"><div class="panelHead"><div class="panelTitle"><div class="iconbox">✓</div><div><h2>Website Berjaya Diterbitkan</h2><p id="publishMsg" class="note">URL awam sedia digunakan.</p></div></div></div><label>URL Awam Website</label><div class="urlbox"><input id="publicUrl" readonly><button class="btn btnSoft" onclick="copyUrl()">Salin URL</button><button class="btn btnPrimary" onclick="openUrl()">Buka Website</button></div><div class="visitorStat"><div><small>STATISTIK WEBSITE</small><b><span id="visitorStats">0</span> pelawat</b></div><button class="btn btnLight" onclick="refreshStats()">Semak Statistik</button></div></section>
 
       <section class="panel"><div class="panelHead"><div class="panelTitle"><div class="iconbox">AI</div><div><h2>Prompt untuk ChatGPT Sites / Canva</h2><p class="note">Pilihan tambahan jika pelajar mahu ubah reka bentuk melalui platform lain.</p></div></div></div><div id="output" class="out">Tekan “Jana Prompt”.</div><div class="actions promptActions"><button class="btn btnSoft" onclick="copyPrompt()">Salin Prompt</button></div></section>
     </div>
@@ -98,7 +123,7 @@
     <aside class="right"><section class="panel sticky"><div class="panelHead"><div class="panelTitle"><div class="iconbox">05</div><div><h2>Pratonton Langsung</h2><p class="note">Semak susun atur, gambar, teks dan CTA sebelum diterbitkan.</p></div></div></div><div class="previewShell"><div class="browserbar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><div class="addressbar">your-business.netlify.app</div></div><iframe id="frame" class="preview" title="Preview website"></iframe></div></section></aside>
   </main>
 
-  <footer class="footer">Business Website Studio v8 • TVET MARA Besut • Built for learning, branding & real business use</footer>
+  <footer class="footer">Business Website Studio v9 • TVET MARA Besut • Built for learning, branding & real business use</footer>
 </div>
 <script src="/business-types.js"></script>
 <script src="/app.js"></script>
