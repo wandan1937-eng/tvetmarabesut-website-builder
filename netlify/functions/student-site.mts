@@ -6,6 +6,7 @@ type SiteRecord = {
   publishKey: string;
   businessName?: string;
   updatedAt: string;
+  allowIndex?: boolean;
 };
 
 function getStudentStore() {
@@ -36,7 +37,10 @@ export default async (req: Request) => {
     });
   }
 
-  return new Response(record.html, {
+  const canonicalUrl = `${new URL(req.url).origin}/site/${slug}`;
+  const html = record.html.replaceAll("{{CANONICAL_URL}}", canonicalUrl);
+
+  return new Response(html, {
     status: 200,
     headers: {
       "Content-Type": "text/html; charset=utf-8",
