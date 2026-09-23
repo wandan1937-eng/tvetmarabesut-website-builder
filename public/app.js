@@ -3,7 +3,7 @@ function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&l
 function safe(u){try{const x=new URL(u);return /^https?:$/.test(x.protocol)?u:""}catch{return""}}
 function show(m){const s=$("status");s.textContent=m;s.style.display="block";setTimeout(()=>s.style.display="none",2600)}
 function currentType(){return BUSINESS_TYPES[v("businessType")]||BUSINESS_TYPES.food}
-function fileData(file){return new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const max=1600,scale=Math.min(1,max/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale)),c=document.createElement("canvas"),ctx=c.getContext("2d");c.width=w;c.height=h;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";ctx.drawImage(img,0,0,w,h);resolve(c.toDataURL("image/webp",.86))};img.onerror=()=>resolve(reader.result);img.src=reader.result};reader.readAsDataURL(file)})}
+function fileData(file){return new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const max=1200,scale=Math.min(1,max/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale)),c=document.createElement("canvas"),ctx=c.getContext("2d");c.width=w;c.height=h;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";ctx.drawImage(img,0,0,w,h);resolve(c.toDataURL("image/webp",.80))};img.onerror=()=>resolve(reader.result);img.src=reader.result};reader.readAsDataURL(file)})}
 $("logoFile").onchange=async e=>{if(e.target.files[0]){logoData=await fileData(e.target.files[0]);$("logoPrev").innerHTML=`<img class="thumb" src="${logoData}" alt="Logo">`}};
 function renderTypeFields(){const t=currentType();$("typeHint").textContent=t.hint;$("templateBadge").textContent=t.name;$("typeDetailsTitle").textContent=t.detailTitle;$("typeDetailsNote").textContent=t.detailNote;$("itemsTitle").textContent=t.itemTitle;$("itemsNote").textContent=`Tambah satu atau lebih ${t.itemSingular.toLowerCase()}. Setiap item akan dipaparkan dengan gambar, harga, penerangan dan CTA yang sesuai.`;$("typeSpecificFields").innerHTML=`<div class="dynamicFields">${t.fields.map(f=>`<div><label>${f.label}</label><input id="${f.id}" placeholder="${f.placeholder}"></div>`).join("")}</div>`}
 function applyBusinessType(force=false){const t=currentType();renderTypeFields();if(force||!v("category"))$("category").value=t.category;if(force||!v("headline"))$("headline").value=t.headline;if(force||!v("about"))$("about").value=t.about;if(force||!v("usp"))$("usp").value=t.usp;if(force||!v("cta"))$("cta").value=t.cta;if(force||!v("style"))$("style").value=t.style;if(force||!v("color"))$("color").value=t.color;renderProducts();preview()}
@@ -52,7 +52,64 @@ return `<!doctype html><html lang="ms"><head><meta charset="utf-8"><meta name="v
 function hexTint(hex){let h=(hex||"#315efb").replace("#","");if(h.length===3)h=h.split("").map(x=>x+x).join("");const n=parseInt(h,16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;return`rgba(${r},${g},${b},.10)`}
 function preview(){$("frame").srcdoc=build();show("Pratonton telah dikemas kini.")}
 function slug(s){return(s||"website").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,50)||"website"}
-async function publishWebsite(){if(!v("bizName")||!v("headline")||!v("whatsapp")||!products.some(p=>p.name.trim())){alert("Lengkapkan nama perniagaan, headline, WhatsApp dan sekurang-kurangnya satu item.");return}const h=build();$("frame").srcdoc=h;$("publishPanel").style.display="block";$("publishMsg").textContent="⏳ Sedang menerbitkan website...";const base=slug(v("bizName"));let saved={};try{saved=JSON.parse(localStorage.getItem("pub:"+base)||"{}")}catch{}try{const r=await fetch("/api/publish-site",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({requestedSlug:saved.slug||base,publishKey:saved.publishKey||"",html:h,businessName:v("bizName"),allowIndex:$("allowIndex")?.checked===true})}),d=await r.json();if(!r.ok||!d.url)throw Error(d.error||"Publish gagal");localStorage.setItem("pub:"+base,JSON.stringify(d));$("publicUrl").value=d.url;$("publishMsg").textContent="✓ Website berjaya diterbitkan.";refreshStats();show("Website berjaya dipublish.")}catch(e){$("publishMsg").textContent="Publish gagal: "+e.message}}
+async function publishWebsite(){
+  if(!v("bizName")||!v("headline")||!v("whatsapp")||!products.some(p=>p.name.trim())){
+    alert("Lengkapkan nama perniagaan, headline, WhatsApp dan sekurang-kurangnya satu item.");
+    return;
+  }
+  $("publishPanel").style.display="block";
+  $("publishMsg").textContent="⏳ Sedang menyediakan website...";
+  try{
+    const h=build();
+    $("frame").srcdoc=h;
+    const bytes=new TextEncoder().encode(h).byteLength;
+    const mb=(bytes/1024/1024).toFixed(2);
+    if(bytes>4_700_000){
+      throw Error(`Saiz website ${mb} MB terlalu besar. Kurangkan gambar atau guna gambar bawah 700 KB setiap satu.`);
+    }
+
+    const base=slug(v("bizName"));
+    let saved={};
+    try{saved=JSON.parse(localStorage.getItem("pub:"+base)||"{}")}catch{}
+    $("publishMsg").textContent=`⏳ Sedang menerbitkan website... (${mb} MB)`;
+
+    const endpoint=window.location.origin+"/api/publish-site";
+    const r=await fetch(endpoint,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify({
+        requestedSlug:saved.slug||base,
+        publishKey:saved.publishKey||"",
+        html:h,
+        businessName:v("bizName"),
+        allowIndex:$("allowIndex")?.checked===true
+      })
+    });
+
+    const raw=await r.text();
+    let d={};
+    if(raw){
+      try{d=JSON.parse(raw)}
+      catch{
+        const clean=raw.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim().slice(0,220);
+        throw Error(`Server tidak memulangkan data JSON yang sah (HTTP ${r.status}). ${clean||"Tiada mesej daripada server."}`);
+      }
+    }
+
+    if(!r.ok) throw Error(d.error||d.detail||`Ralat server HTTP ${r.status}`);
+    if(!d.url) throw Error(d.error||"URL website tidak diterima daripada server.");
+
+    localStorage.setItem("pub:"+base,JSON.stringify(d));
+    $("publicUrl").value=d.url;
+    $("publishMsg").textContent="✓ Website berjaya diterbitkan.";
+    try{await refreshStats()}catch{}
+    show("Website berjaya dipublish.");
+  }catch(e){
+    console.error("Publish error",e);
+    $("publishMsg").textContent="Publish gagal: "+(e?.message||String(e));
+    show("Publish belum berjaya. Semak mesej ralat.");
+  }
+}
 async function copyUrl(){const t=$("publicUrl").value;if(!t)return;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(t);else{$("publicUrl").select();document.execCommand("copy")}show("URL disalin.")}catch{$("publicUrl").select();show("URL dipilih. Tekan lama dan Salin.")}}
 function openUrl(){const u=$("publicUrl").value;if(u)window.open(u,"_blank")}
 function generatePrompt(){const t=currentType(),ps=products.map((p,i)=>`${i+1}. ${p.name||"[Nama Item]"} | Harga: ${p.price||"[Harga]"} | Promosi: ${p.promo||"Tiada"} | ${p.desc||""}`).join("\n"),extra=t.fields.map(f=>`${f.label}: ${v(f.id)||"-"}`).join("\n");$("output").textContent=`Bina sebuah website perniagaan profesional satu halaman dalam Bahasa Melayu.\n\nJENIS PERNIAGAAN\n${t.name}\n\nNAMA PERNIAGAAN\n${v("bizName")||"[Nama Perniagaan]"}\n\nKATEGORI\n${v("category")||"-"}\n\nHEADLINE\n${v("headline")||"[Headline]"}\n\nTENTANG PERNIAGAAN\n${v("about")||"-"}\n\nPELANGGAN SASARAN\n${v("target")||"-"}\n\nUSP / KELEBIHAN\n${v("usp")||"-"}\n\n${t.itemTitle.toUpperCase()}\n${ps}\n\nMAKLUMAT KHUSUS\n${extra}\n\nWAKTU OPERASI\n${[v("operationDays"),v("operationHours"),v("operationNote")].filter(Boolean).join(" | ")||"-"}\n\nTESTIMONI\n${validTestimonials().map((x,i)=>`${i+1}. ${x.text}${x.name?` — ${x.name}`:""}`).join("\\n")||"Tiada"}\n\nFAQ\n${validFAQs().map((x,i)=>`${i+1}. ${x.question} — ${x.answer}`).join("\\n")||"Tiada"}\n\nCTA\n${v("cta")}\n\nWHATSAPP\n${v("whatsapp")||"-"}\n\nMEDIA SOSIAL / SALURAN JUALAN\n${allSocialLinks().map(x=>`${x[0]}: ${x[1]}`).join("\\n")||"-"}\n\nLOKASI\n${v("mapAddress")||v("location")||"-"}\n\nGAYA VISUAL\n${v("style")}\n\nPastikan website mobile-friendly, profesional, mempunyai CTA WhatsApp yang jelas, visual produk kemas, dan wording disesuaikan dengan jenis perniagaan.`}
