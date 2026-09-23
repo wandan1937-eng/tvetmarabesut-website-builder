@@ -114,6 +114,88 @@ async function copyUrl(){const t=$("publicUrl").value;if(!t)return;try{if(naviga
 function openUrl(){const u=$("publicUrl").value;if(u)window.open(u,"_blank")}
 function generatePrompt(){const t=currentType(),ps=products.map((p,i)=>`${i+1}. ${p.name||"[Nama Item]"} | Harga: ${p.price||"[Harga]"} | Promosi: ${p.promo||"Tiada"} | ${p.desc||""}`).join("\n"),extra=t.fields.map(f=>`${f.label}: ${v(f.id)||"-"}`).join("\n");$("output").textContent=`Bina sebuah website perniagaan profesional satu halaman dalam Bahasa Melayu.\n\nJENIS PERNIAGAAN\n${t.name}\n\nNAMA PERNIAGAAN\n${v("bizName")||"[Nama Perniagaan]"}\n\nKATEGORI\n${v("category")||"-"}\n\nHEADLINE\n${v("headline")||"[Headline]"}\n\nTENTANG PERNIAGAAN\n${v("about")||"-"}\n\nPELANGGAN SASARAN\n${v("target")||"-"}\n\nUSP / KELEBIHAN\n${v("usp")||"-"}\n\n${t.itemTitle.toUpperCase()}\n${ps}\n\nMAKLUMAT KHUSUS\n${extra}\n\nWAKTU OPERASI\n${[v("operationDays"),v("operationHours"),v("operationNote")].filter(Boolean).join(" | ")||"-"}\n\nTESTIMONI\n${validTestimonials().map((x,i)=>`${i+1}. ${x.text}${x.name?` — ${x.name}`:""}`).join("\\n")||"Tiada"}\n\nFAQ\n${validFAQs().map((x,i)=>`${i+1}. ${x.question} — ${x.answer}`).join("\\n")||"Tiada"}\n\nCTA\n${v("cta")}\n\nWHATSAPP\n${v("whatsapp")||"-"}\n\nMEDIA SOSIAL / SALURAN JUALAN\n${allSocialLinks().map(x=>`${x[0]}: ${x[1]}`).join("\\n")||"-"}\n\nLOKASI\n${v("mapAddress")||v("location")||"-"}\n\nGAYA VISUAL\n${v("style")}\n\nPastikan website mobile-friendly, profesional, mempunyai CTA WhatsApp yang jelas, visual produk kemas, dan wording disesuaikan dengan jenis perniagaan.`}
 async function copyPrompt(){const t=$("output").textContent;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(t);else{const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove()}show("Prompt disalin.")}catch{show("Copy automatik gagal. Sila pilih teks secara manual.")}}
-function saveDraft(){const ids=["businessType","bizName","category","headline","about","target","location","usp","logoUrl","style","color","cta","whatsapp","facebook","instagram","tiktok","youtube","telegram","xTwitter","linkedin","websiteUrl","shopee","lazada","operationDays","operationHours","operationNote","mapAddress","mapLink","seoTitle","seoDescription","seoKeywords"],d={};ids.forEach(id=>d[id]=v(id));currentType().fields.forEach(f=>d[f.id]=v(f.id));d.products=products.map(p=>({...p,img:""}));d.customLinks=customLinks;d.testimonials=testimonials;d.faqs=faqs;d.allowIndex=$("allowIndex")?.checked===true;localStorage.setItem("builder:v9",JSON.stringify(d));show("Draf disimpan pada peranti ini.")}
-function loadDraft(){let d={};try{d=JSON.parse(localStorage.getItem("builder:v9")||localStorage.getItem("builder:v8")||localStorage.getItem("builder:v6")||localStorage.getItem("builder:v5")||"{}");if(d.businessType)$("businessType").value=d.businessType}catch{}renderTypeFields();try{Object.keys(d).forEach(k=>{if(k!=="products"&&$(k))$(k).value=d[k]});products=d.products?.length?d.products.map(newP):[newP()];customLinks=Array.isArray(d.customLinks)?d.customLinks.map(newCustomLink):[];testimonials=Array.isArray(d.testimonials)&&d.testimonials.length?d.testimonials.map(newTestimonial):(d.testimonial?[newTestimonial({text:d.testimonial})]:[newTestimonial()]);faqs=Array.isArray(d.faqs)&&d.faqs.length?d.faqs.map(newFAQ):[newFAQ()];if($("allowIndex"))$("allowIndex").checked=d.allowIndex===true}catch{products=[newP()];customLinks=[];testimonials=[newTestimonial()];faqs=[newFAQ()]}if(!d.businessType)applyBusinessType(false);renderProducts();renderCustomLinks();renderTestimonials();renderFAQs()}
+const DRAFT_FIELDS=["businessType","bizName","category","headline","about","target","location","usp","logoUrl","style","color","cta","whatsapp","facebook","instagram","tiktok","youtube","telegram","xTwitter","linkedin","websiteUrl","shopee","lazada","operationDays","operationHours","operationNote","mapAddress","mapLink","seoTitle","seoDescription","seoKeywords"];
+function draftSnapshot(){
+  const d={version:9,savedAt:new Date().toISOString()};
+  DRAFT_FIELDS.forEach(id=>d[id]=v(id));
+  currentType().fields.forEach(f=>d[f.id]=v(f.id));
+  d.products=products.map(p=>({...p,img:""}));
+  d.customLinks=customLinks;
+  d.testimonials=testimonials;
+  d.faqs=faqs;
+  d.allowIndex=$("allowIndex")?.checked===true;
+  return d;
+}
+function draftHasContent(d){if(!d||typeof d!=="object")return false;const score=["bizName","headline","about","whatsapp","category","target","location"].filter(k=>String(d[k]||"").trim()).length;return score>0||(Array.isArray(d.products)&&d.products.some(p=>String(p?.name||"").trim()))}
+function persistDraft(silent=false){
+  try{
+    const d=draftSnapshot(),raw=JSON.stringify(d);
+    localStorage.setItem("builder:latest",raw);
+    localStorage.setItem("builder:v9",raw);
+    localStorage.setItem("builder:autosave",raw);
+    const info=$("draftInfo");if(info)info.textContent="Draf terakhir disimpan: "+new Date(d.savedAt).toLocaleString("ms-MY");
+    if(!silent)show("Draf berjaya disimpan pada peranti ini.");
+    return true;
+  }catch(e){
+    console.error("Draft save error",e);
+    if(!silent)show("Draf gagal disimpan. Storan browser mungkin penuh.");
+    return false;
+  }
+}
+function saveDraft(){persistDraft(false)}
+function candidateDrafts(){
+  const preferred=["builder:latest","builder:autosave","builder:v9","builder:v8","builder:v7","builder:v6","builder:v5","builder:v4","builder:v3","builder:v2"];
+  const keys=[...preferred];
+  try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&/(builder|draft|website)/i.test(k)&&!keys.includes(k))keys.push(k)}}catch{}
+  const found=[];
+  keys.forEach((key,order)=>{
+    try{
+      const raw=localStorage.getItem(key);if(!raw)return;
+      const d=JSON.parse(raw);
+      if(!draftHasContent(d))return;
+      const t=d.savedAt?Date.parse(d.savedAt):0;
+      found.push({key,d,time:Number.isFinite(t)?t:0,order});
+    }catch{}
+  });
+  return found.sort((a,b)=>(b.time-a.time)||(a.order-b.order));
+}
+function applyDraftData(d){
+  if(!d||typeof d!=="object")return false;
+  try{
+    if(d.businessType&&$("businessType"))$("businessType").value=d.businessType;
+    renderTypeFields();
+    Object.keys(d).forEach(k=>{
+      if(["products","customLinks","testimonials","faqs","allowIndex","version","savedAt"].includes(k))return;
+      if($(k))$(k).value=d[k]??"";
+    });
+    products=Array.isArray(d.products)&&d.products.length?d.products.map(newP):[newP()];
+    customLinks=Array.isArray(d.customLinks)?d.customLinks.map(newCustomLink):[];
+    testimonials=Array.isArray(d.testimonials)&&d.testimonials.length?d.testimonials.map(newTestimonial):(d.testimonial?[newTestimonial({text:d.testimonial})]:[newTestimonial()]);
+    faqs=Array.isArray(d.faqs)&&d.faqs.length?d.faqs.map(newFAQ):[newFAQ()];
+    if($("allowIndex"))$("allowIndex").checked=d.allowIndex===true;
+    renderProducts();renderCustomLinks();renderTestimonials();renderFAQs();preview();
+    const info=$("draftInfo");if(info)info.textContent=d.savedAt?"Draf dipulihkan: "+new Date(d.savedAt).toLocaleString("ms-MY"):"Draf lama berjaya dipulihkan.";
+    return true;
+  }catch(e){console.error("Draft apply error",e);return false}
+}
+function recoverDraft(){
+  const list=candidateDrafts();
+  if(!list.length){alert("Tiada draf ditemui dalam browser ini. Pastikan guna browser dan URL yang sama serta data browser belum dipadam.");return}
+  const best=list[0];
+  if(applyDraftData(best.d)){show("Draf berjaya dipulihkan.");persistDraft(true)}
+  else alert("Draf ditemui tetapi tidak dapat dibaca.");
+}
+function loadDraft(){
+  const list=candidateDrafts();
+  if(list.length){applyDraftData(list[0].d);return}
+  products=[newP()];customLinks=[];testimonials=[newTestimonial()];faqs=[newFAQ()];
+  renderTypeFields();renderProducts();renderCustomLinks();renderTestimonials();renderFAQs();applyBusinessType(false);
+}
+let autosaveTimer=null;
+function scheduleAutosave(){
+  clearTimeout(autosaveTimer);
+  autosaveTimer=setTimeout(()=>{if(draftHasContent(draftSnapshot()))persistDraft(true)},1200);
+}
+document.addEventListener("input",e=>{if(e.target&&e.target.closest(".left"))scheduleAutosave()});
+document.addEventListener("change",e=>{if(e.target&&e.target.closest(".left"))scheduleAutosave()});
 loadDraft();preview();
