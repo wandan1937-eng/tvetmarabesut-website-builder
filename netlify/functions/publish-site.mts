@@ -39,6 +39,7 @@ export default async (req: Request) => {
     return Response.json({ error: "Method not allowed" }, { status: 405 });
   }
 
+  try {
   let body: any;
   try {
     body = await req.json();
@@ -91,6 +92,16 @@ export default async (req: Request) => {
   const url = `${origin}/site/${slug}`;
 
   return Response.json({ ok: true, slug, publishKey, url });
+  } catch (error) {
+    console.error("publish-site failed", error);
+    return Response.json(
+      {
+        error: "Ralat server semasa publish.",
+        detail: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
+    );
+  }
 };
 
 export const config: Config = {
